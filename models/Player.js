@@ -23,7 +23,17 @@ const playerSchema = new mongoose.Schema({
         required:[true, 'Password is required'],
         minlength: [8, 'Password must contain at least 8 characters'],
     },
-}, {
+    kills:{
+        type: Number,
+        default: 0,
+        min:[0, 'Kills cannot be below 0']
+    },
+    deaths:{
+        type: Number,
+        default: 0,
+        min:[0, 'Deaths cannot be below 0']
+    },
+ }, {
     timestamps: true
 });
 

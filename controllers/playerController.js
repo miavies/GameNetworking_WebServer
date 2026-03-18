@@ -101,3 +101,99 @@ exports.updateScore = async (req, res) =>{
         });
     }
 }
+
+exports.getScore = async (req, res) =>{
+    try{
+        const id = req.params.id; // /player/:id
+        const player = await Player.findById(id);
+
+        if(!player){
+            return res.status(404).json({
+                success: false,
+                message: 'Cannot find score'
+            });
+        }
+
+        await player.save();
+        res.status(200).json({
+            success: true,
+            data:player
+        });
+    }
+    catch(error){
+        res.status(500).json({
+            success: false,
+            message: 'Failed to get Player Score',
+            error: error.message
+        });
+    }
+}
+
+exports.deletePlayer = async (req, res) => {
+    try {
+        const id = req.params.id; // /player/:id
+        const player = await Player.findByIdAndDelete(id);
+
+        if (!player) {
+            return res.status(404).json({
+                success: false,
+                message: 'Player not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Player account deleted successfully'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to delete player',
+            error: error.message
+        });
+    }
+};
+
+exports.updatePassword = async (req, res) =>{
+    try{
+        const{username, newPassword, confirmPassword} = req.body;
+        const player = await Player.findOne({username});
+
+        if(!player || player.username !== username){
+            return res.status(404).json({
+                success: false,
+                message: 'Player not found'
+            });
+        }
+
+        if (newPassword === player.password){
+            return res.status(400).json({
+                success: false,
+                message: 'New password cannot be the same as the old password'
+            });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Passwords do not match'
+            });
+        }
+
+        player.password = newPassword;
+        
+        await player.save();
+        res.status(200).json({
+            success: true,
+            message: 'Password updated successfully',
+            data:player
+        });
+    }
+    catch(error){
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update password',
+            error: error.message
+        });
+    }
+};

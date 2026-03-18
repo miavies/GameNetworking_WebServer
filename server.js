@@ -5,7 +5,10 @@ const dotenv = require ('dotenv');
 const{
     createPlayer,
     login,
-    updateScore
+    updateScore,
+    getScore,
+    deletePlayer,
+    updatePassword
 }   = require('./controllers/playerController');
 
 
@@ -14,6 +17,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(()=> console.log('Connected to MongoDB'))
@@ -21,22 +25,16 @@ mongoose.connect(process.env.MONGODB_URI)
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/players/:id', (req, res)=>{
-    res.json({message: `GET PLAYERS: Getting player with Id ${req.params.id}`});
-});
-
 app.put('/', (req, res)=>{
     res.json({message: 'Welcome to Game Networking'});
 });
 
 app.post('/players/register', createPlayer);
 app.post('/players/login', login);
+app.put('/players/new-password', updatePassword)
 app.put('/players/:id',updateScore);
-
-app.delete('/', (req, res)=>{
-    res.json({message: 'Welcome to Game Networking'});
-});
-
+app.get('/players/:id',getScore);
+app.delete('/players/:id', deletePlayer);
 
 
 app.listen(PORT, ()=> {

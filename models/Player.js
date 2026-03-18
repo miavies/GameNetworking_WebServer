@@ -37,5 +37,5 @@ const playerSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const Player = mongoose.model('PLayer', playerSchema);
+const Player = mongoose.model('Player', playerSchema);
 module.exports = Player;

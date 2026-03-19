@@ -1,13 +1,23 @@
 const Player = require('../models/Player');
+const{generateToken} = require('../utils/jwt');
 
 exports.createPlayer = async (req, res)=> {
     try{
         const player = await Player.create(req.body);
 
+        const token = generateToken(player._id);
+
         res.status(201).json({
             success: true,
-            message: 'Player created successfully',
-            data: player
+            message: 'Player registered successfully',
+            token,
+            data: {
+                id: player._id,
+                username: player.username,
+                email: player.email,
+                kills: player.kills,
+                deaths: player.deaths
+            }
         }); 
     } 
     catch(error){
@@ -57,10 +67,17 @@ exports.login = async (req, res) => {
             });
         }
 
-        res.status(200).json({
+        res.status(201).json({
             success: true,
-            message: "Login successful",
-            data: player
+            message: 'Login successfully',
+            token,
+            data: {
+                id: player._id,
+                username: player.username,
+                email: player.email,
+                kills: player.kills,
+                deaths: player.deaths
+            }
         });
     }
     catch(error){
@@ -74,8 +91,7 @@ exports.login = async (req, res) => {
 exports.updateScore = async (req, res) =>{
     try{
         const{kills, deaths} = req.body;
-        const id = req.params.id; // /player/:id
-        const player = await Player.findById(id);
+        const player = req.player;
 
         if(!player){
             return res.status(404).json({
